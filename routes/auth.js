@@ -29,9 +29,11 @@ router.post('/signup', (req,res)=> {
        bcrypt.hash(password, 15)
        .then(hashedpassword => {
                 const user = new User ({
+                  
                     email,
                     password:hashedpassword,
                     name
+                  
                 })
                 user.save()
                 .then (user=> {
@@ -65,7 +67,9 @@ router.post('/signin', (req,res)=> {
                       /*   res.json({message: "Successfully signed in"}) */
                         //  giving user a tokent to access protected resources
                         const token = jwt.sign({_id: savedUser._id},JWT_SECRET)
-                        res.json({token})
+                        // destructuring the objects
+                        const {_id,name,email} = savedUser
+                        res.json({token,_id,name,email})
                     }else {
                         res.status(422).json({error: "Invalid email or password"})
                     }
