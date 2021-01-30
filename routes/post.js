@@ -7,7 +7,7 @@ const requiredLogin = require('../middleware/requireLogin')
 const Post = mongoose.model("Post")
 
 
-router.get('/allpost',(req,res) => {
+router.get('/allpost',requiredLogin,(req,res) => {
     Post.find()
         .populate("postedBy","_id name")
         .then(posts => {
@@ -20,8 +20,9 @@ router.get('/allpost',(req,res) => {
 
 
 router.post('/createpost',requiredLogin, (req,res) => {
-    const {title,body} = req.body
-    if (!title || !body ) {
+    const {title,body,imageurl} = req.body
+    console.log(title,body,imageurl);
+    if (!title || !body || !imageurl ) {
         res.status.apply(422).json({error: "Please file all the boxes"})
 
     }
@@ -33,6 +34,7 @@ router.post('/createpost',requiredLogin, (req,res) => {
     const post = new Post ({
         title,
         body,
+       image: imageurl,
         postedBy: req.user
     })
     post.save()
